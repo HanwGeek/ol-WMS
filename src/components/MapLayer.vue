@@ -1,11 +1,11 @@
 <template>
   <div>
     <div id="map"></div>
-    <div ref="popup" class="ol-popup">
+    <!-- <div ref="popup" class="ol-popup">
         <el-card>
           {{coord}}
         </el-card>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import {Style, Fill, Stroke} from 'ol/style'
 import {OSM, vector, TileWMS} from 'ol/source'
 import GeoJSON from 'ol/format/GeoJSON'
 import {toStringHDMS} from 'ol/coordinate'
-import 'ol/control'
+import x2js from 'x2js'
 
 export default {
   components: {
@@ -32,8 +32,18 @@ export default {
     return {
       coord: null,
       map: null,
-      neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms'
+      neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms?service=WMS',
+      version: '1.3.0',
+      format: 'image/png',
+      //https://mrdata.usgs.gov/services/nmra?request=getmap&service=WMS&version=1.3.0&layers=USNationalMineralAssessment1998&width=4096&height=4096&crs=EPSG:4326&bbox=24,-165,73,-66&format=image/png
+      //https://mrdata.usgs.gov/wms.html
+      //https://mrdata.usgs.gov/wfs.html
     }
+  },
+  created () {
+    this.$bus.$on("getCap", () => {
+      this.getCap();
+    })
   },
   methods: {
     drawBaseMap () {
@@ -58,7 +68,6 @@ export default {
               url: 'https://ahocevar.com/geoserver/wms',
               params: {'LAYERS': 'topp:states', 'TILED': true},
               serverType: 'geoserver',
-              // Countries have transparency, so do not fade tiles:
               transition: 0
             })
           })
@@ -105,6 +114,16 @@ export default {
           zoom: 4
         })
       });
+    },
+    getCap () {
+      // console.log(this.neoWMS);
+      this.$http.get(this.neoWMS, {
+        request: 'GetCapabilities'
+      }).then((res) => {
+        // console.log(res.data);
+        var json = this.$x2js.xml2js(res.data);
+        console.log(json);
+      })
     }
   },
   mounted () {

@@ -4,13 +4,15 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui';
-import VueResource from 'vue-resource'
+import axios from 'axios'
+import x2js from 'x2js'
 import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
-Vue.use(VueResource);
+Vue.prototype.$http = axios;
 Vue.prototype.$bus = new Vue();
+Vue.prototype.$x2js = new x2js();
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

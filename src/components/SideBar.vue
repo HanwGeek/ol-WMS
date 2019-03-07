@@ -1,5 +1,10 @@
 <template>
   <div>
+    <el-collapse accordion>
+    <el-collapse-item title="GetCapablities" name="1">
+      <el-button type="primary" round @click="getCap">GetCapablities</el-button>
+    </el-collapse-item>
+  </el-collapse>
   </div>
 </template>
 
@@ -12,23 +17,15 @@ export default {
     }
   },
   methods: {
-    showDliver () {
-      this.$bus.$emit("show");
-    },
-    addPop () {
-      this.$bus.$emit("addPop");
-    },
-    addRoad () {
-      this.$bus.$emit("addRoad");
-    },
-    addRes () {
-      this.$bus.$emit("addRes");
+    getCap () {
+      this.$bus.$emit("getCap");
     }
   }
 }
 </script>
 
 <style scoped>
+
 .el-collapse-item {
   font-size: 24px;
 }
