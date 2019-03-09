@@ -34,6 +34,7 @@ export default {
       map: null,
       cap: null,
       layers: null,
+      wmsLayers: null,
       layerName: "",
       neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms',
       mrWMS: 'https://mrdata.usgs.gov/wms.html?service=WMS',
@@ -48,6 +49,10 @@ export default {
     this.$bus.$on("getNeoCap", () => {
       this.getNeoCap();
     });
+    this.$bus.$on("getLayerName", (name) => {
+      this.layerName = name;
+      this.draw();
+    })
     // this.$bus.$on("getMrCap", () => {
     //   this.getMrCap();
     // })
@@ -104,7 +109,7 @@ export default {
           source: new TileWMS({
             url: this.neoWMS,
             params: {
-              'LAYERS': 'MODAL2_M_AER_OD'
+              'LAYERS': this.layerName
               },
             // serverType: 'geoserver',
             // Countries have transparency, so do not fade tiles:
@@ -130,14 +135,14 @@ export default {
         }
       }).then((res) => {
         this.cap = this.$x2js.xml2js(res.data).WMS_Capabilities;
-        this.layers = this.cap.Capability.Layer.Layer;
-        this.$bus.$emit("getLayers", this.layers);
+        this.wmsLayers = this.cap.Capability.Layer.Layer;
+        this.$bus.$emit("getLayers", this.wmsLayers);
       })
     }
   },
   mounted () {
     // this.drawBaseMap();
-    this.draw();
+    // this.draw();
   }
 }
 </script>

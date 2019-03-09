@@ -70,6 +70,7 @@ export default {
     },
     click(row) {
       console.log(row);
+      this.$bus.$emit("getLayerName", row.Name);
     },
     expandChange(row, expandedRows) {
       if(expandedRows.length > 1) {
