@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <el-container>
+    <el-container style="height: 600px">
       <!-- <el-header> -->
        <NavHeader />
       <!-- </el-header> -->
       <el-container>
-        <el-aside width="150px">
+        <el-aside width="200px">
           <SideBar />
         </el-aside>
         <el-main>
@@ -44,7 +44,7 @@ export default {
 }
 
 .el-aside {
-  line-height: 200px;
+  line-height: 50px;
   margin-top: 50px;
 }
 

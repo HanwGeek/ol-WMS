@@ -32,18 +32,25 @@ export default {
     return {
       coord: null,
       map: null,
-      neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms?service=WMS',
-      version: '1.3.0',
+      cap: null,
+      layers: null,
+      layerName: "",
+      neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms',
+      mrWMS: 'https://mrdata.usgs.gov/wms.html?service=WMS',
       format: 'image/png',
+      crs: "CRS:84"
       //https://mrdata.usgs.gov/services/nmra?request=getmap&service=WMS&version=1.3.0&layers=USNationalMineralAssessment1998&width=4096&height=4096&crs=EPSG:4326&bbox=24,-165,73,-66&format=image/png
       //https://mrdata.usgs.gov/wms.html
       //https://mrdata.usgs.gov/wfs.html
     }
   },
   created () {
-    this.$bus.$on("getCap", () => {
-      this.getCap();
-    })
+    this.$bus.$on("getNeoCap", () => {
+      this.getNeoCap();
+    });
+    // this.$bus.$on("getMrCap", () => {
+    //   this.getMrCap();
+    // })
   },
   methods: {
     drawBaseMap () {
@@ -93,14 +100,13 @@ export default {
     draw() {
       var layers = [
         new TileLayer({
-          source: new OSM()
-        }),
-        new TileLayer({
-          extent: [-13884991, 2870341, -7455066, 6338219],
+          // extent: [-180, -90, -180, 90],
           source: new TileWMS({
-            url: 'https://ahocevar.com/geoserver/wms',
-            params: {'LAYERS': 'topp:states', 'TILED': true},
-            serverType: 'geoserver',
+            url: this.neoWMS,
+            params: {
+              'LAYERS': 'MODAL2_M_AER_OD'
+              },
+            // serverType: 'geoserver',
             // Countries have transparency, so do not fade tiles:
             transition: 0
           })
@@ -110,19 +116,22 @@ export default {
         layers: layers,
         target: 'map',
         view: new OpenLayersView({
-          center: [-10997148, 4569099],
+          projection: 'CRS:84',
+          center: [0, 0],
           zoom: 4
         })
       });
     },
-    getCap () {
-      // console.log(this.neoWMS);
+    getNeoCap () {
       this.$http.get(this.neoWMS, {
-        request: 'GetCapabilities'
+        params:{
+          service: "WMS",
+          request: 'GetCapabilities'
+        }
       }).then((res) => {
-        // console.log(res.data);
-        var json = this.$x2js.xml2js(res.data);
-        console.log(json);
+        this.cap = this.$x2js.xml2js(res.data).WMS_Capabilities;
+        this.layers = this.cap.Capability.Layer.Layer;
+        this.$bus.$emit("getLayers", this.layers);
       })
     }
   },
@@ -136,7 +145,7 @@ export default {
 <style scoped>
 #map {
   width: 100%;
-  height: 800px;
+  height: 600px;
   left: 0;
   z-index: 5;
 }

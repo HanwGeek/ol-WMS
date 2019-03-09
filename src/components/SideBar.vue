@@ -1,11 +1,53 @@
 <template>
   <div>
-    <el-collapse accordion>
-    <el-collapse-item title="GetCapablities" name="1">
-      <el-button type="primary" round @click="getCap">GetCapablities</el-button>
+    <el-button type="primary" round @click="getCap">GetCapabilities</el-button>
+    <el-collapse accordion>    
+    <el-collapse-item title="Neo" name="1">
+<!--       
+      <ul>
+        <li v-for="layer in this.layers">
+          {{layer.Title}}
+        </li>
+      </ul> -->
+      <el-table
+        :data="this.layers"
+        :show-header="false"
+        @expand-change="expandChange"
+        class="expand-table">
+        <el-table-column 
+          type="expand"
+          class="expand-table"
+          min-width="200px">
+          
+          <template slot-scope="props" class="expand-table">
+            <el-table
+              :data="props.row.Layer"
+              :show-header="false"
+              @row-click="click"
+              class="expand-table"
+              >
+              <el-table-column
+                prop="Name"
+                min-width="200px"
+              >
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="Title">
+          <!-- <template slot-scope="scope">
+            <el-collapse-item title="">
+            </el-collapse-item>
+          </template> -->
+        </el-table-column>
+      </el-table>
     </el-collapse-item>
   </el-collapse>
   </div>
+    <!-- <el-collapse-item title="Mrdata" name="2">
+    <el-button type="primary" round @click="getMrCap">GetCapabilities</el-button>
+    </el-collapse-item> -->
 </template>
 
 <script>
@@ -13,12 +55,26 @@ export default {
   name: 'SideBar',
   data () {
     return {
-
+      activeNames: "",
+      layers: null,
     }
   },
+  created () {
+    this.$bus.$on("getLayers", (layers) => {
+      this.layers = layers;
+      })
+    },
   methods: {
     getCap () {
-      this.$bus.$emit("getCap");
+      this.$bus.$emit("getNeoCap");
+    },
+    click(row) {
+      console.log(row);
+    },
+    expandChange(row, expandedRows) {
+      if(expandedRows.length > 1) {
+        expandedRows.shift();
+      }
     }
   }
 }
@@ -27,6 +83,23 @@ export default {
 <style scoped>
 
 .el-collapse-item {
-  font-size: 24px;
+  font-size: 10px;
+}
+
+.el-table {
+  font-size: 15px;
+}
+
+.el-table-column {
+  padding: 0px;
+}
+
+.expand-table {
+  width: 100%;
+  padding: 20px 0px;
+}
+
+.el-table__expanded-cell[class*=cell] {
+  padding: 20px 0px
 }
 </style>
