@@ -35,6 +35,7 @@ export default {
       cap: null,
       layers: null,
       wmsLayers: null,
+      osmLayers: null,
       layerName: "",
       neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms',
       mrWMS: 'https://mrdata.usgs.gov/wms.html?service=WMS',
@@ -52,73 +53,18 @@ export default {
     this.$bus.$on("getLayerName", (name) => {
       this.layerName = name;
       this.draw();
-    })
-    // this.$bus.$on("getMrCap", () => {
-    //   this.getMrCap();
-    // })
+    });
+    this.$bus.$on("switchOsm", (activeOsm) => {
+      this.osmLayer.setVisible(activeOsm);
+    });
   },
   methods: {
-    drawBaseMap () {
-      var overlay = new Overlay({
-        element: this.$refs.popup,
-        autoPan: true,
-        autoPanAnimation: {
-          duration: 250
-        }
-      });
-      var osmLayer = new TileLayer({
+    init () {
+      this.osmLayer = new TileLayer({
         source: new OSM()
       })
-      var map = new Map({
-
-        target: 'map',
-        layers: [
-          osmLayer,
-          new TileLayer({
-          extent: [-13884991, 2870341, -7455066, 6338219],
-            source: new TileWMS({
-              url: 'https://ahocevar.com/geoserver/wms',
-              params: {'LAYERS': 'topp:states', 'TILED': true},
-              serverType: 'geoserver',
-              transition: 0
-            })
-          })
-        ],
-        overlays: [overlay],
-        view: new OpenLayersView({
-          projection: 'EPSG:4326',
-          center: [-100, 40],
-          zoom: 12,
-          // minZoom: 10,
-          // maxZoom: 16
-        })
-      });
-
-      map.on('click', (e) => {
-        var coord = e.coordinate;
-        var hdms = toStringHDMS(coord);
-        this.coord = hdms;
-        overlay.setPosition(coord);
-      })
-      this.map = map;
-    },
-    draw() {
-      var layers = [
-        new TileLayer({
-          // extent: [-180, -90, -180, 90],
-          source: new TileWMS({
-            url: this.neoWMS,
-            params: {
-              'LAYERS': this.layerName
-              },
-            // serverType: 'geoserver',
-            // Countries have transparency, so do not fade tiles:
-            transition: 0
-          })
-        })
-      ];
-      var map = new Map({
-        layers: layers,
+      this.map = new Map({
+        layers: [this.osmLayer],
         target: 'map',
         view: new OpenLayersView({
           projection: 'CRS:84',
@@ -126,6 +72,19 @@ export default {
           zoom: 4
         })
       });
+    },
+    draw() {
+        var wmsLayer = new TileLayer({
+          // extent: [-180, -90, -180, 90],
+          source: new TileWMS({
+            url: this.neoWMS,
+            params: {
+              'LAYERS': this.layerName
+              },
+            transition: 0
+          })
+        })
+      this.map.addLayer(wmsLayer);
     },
     getNeoCap () {
       this.$http.get(this.neoWMS, {
@@ -141,8 +100,7 @@ export default {
     }
   },
   mounted () {
-    // this.drawBaseMap();
-    // this.draw();
+    this.init();
   }
 }
 </script>

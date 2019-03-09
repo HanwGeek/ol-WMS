@@ -1,6 +1,12 @@
 <template>
   <div>
+  <el-switch 
+    v-model="activeOsm"
+    active-text="OSM打开"
+    @change="switchOsm">
+    </el-switch>
     <el-button type="primary" round @click="getCap">GetCapabilities</el-button>
+
     <el-collapse accordion>    
     <el-collapse-item title="Neo" name="1">
 <!--       
@@ -57,6 +63,7 @@ export default {
     return {
       activeNames: "",
       layers: null,
+      activeOsm: true,
     }
   },
   created () {
@@ -76,6 +83,9 @@ export default {
       if(expandedRows.length > 1) {
         expandedRows.shift();
       }
+    },
+    switchOsm() {
+      this.$bus.$emit("switchOsm", this.activeOsm);
     }
   }
 }
@@ -100,7 +110,4 @@ export default {
   padding: 20px 0px;
 }
 
-.el-table__expanded-cell[class*=cell] {
-  padding: 20px 0px
-}
 </style>
