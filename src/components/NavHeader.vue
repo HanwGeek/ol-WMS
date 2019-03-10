@@ -1,6 +1,13 @@
 <template>
   <div id='nav-header'>
     <div id='title'>{{title}}</div>
+    <div id='title'>
+      <el-switch 
+        v-model="activeOsm"
+        active-text="OSM打开"
+        @change="switchOsm">
+      </el-switch>
+    </div>
     <div id='nav'>
       <a id='avatar' href='https://hanwgeek.github.io/'>
         <img :src='avatar'>
@@ -16,6 +23,12 @@ export default {
     return {
       title: 'OpenLayers',
       avatar: require("../assets/avatar.jpg"),
+      activeOsm: true,
+    }
+  },
+  methods: {
+    switchOsm() {
+      this.$bus.$emit("switchOsm", this.activeOsm);
     }
   }
 }

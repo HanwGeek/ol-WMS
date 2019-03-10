@@ -1,12 +1,6 @@
 <template>
   <div>
-  <el-switch 
-    v-model="activeOsm"
-    active-text="OSM打开"
-    @change="switchOsm">
-    </el-switch>
     <el-button type="primary" round @click="getCap">GetCapabilities</el-button>
-
     <el-collapse accordion>    
     <el-collapse-item title="Neo" name="1">
 <!--       
@@ -84,9 +78,7 @@ export default {
         expandedRows.shift();
       }
     },
-    switchOsm() {
-      this.$bus.$emit("switchOsm", this.activeOsm);
-    }
+
   }
 }
 </script>
