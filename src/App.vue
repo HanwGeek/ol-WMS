@@ -5,7 +5,7 @@
        <NavHeader />
       <!-- </el-header> -->
       <el-container>
-        <el-aside width="250px" v-show="showSide">
+        <el-aside width="360px" v-show="showSide">
           <SideBar />
         </el-aside>
         <el-main>
@@ -39,7 +39,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

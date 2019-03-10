@@ -37,9 +37,10 @@ export default {
       wmsLayers: null,
       osmLayer: null,
       showLayers: [],
+      visible: [],
       layerName: "",
       neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms',
-      mrWMS: 'https://mrdata.usgs.gov/wms.html?service=WMS',
+      mrWMS: 'https://mrdata.usgs.gov/wms.html',
       format: 'image/png',
       crs: "CRS:84"
       //https://mrdata.usgs.gov/services/nmra?request=getmap&service=WMS&version=1.3.0&layers=USNationalMineralAssessment1998&width=4096&height=4096&crs=EPSG:4326&bbox=24,-165,73,-66&format=image/png
@@ -61,7 +62,11 @@ export default {
     this.$bus.$on("deleteLayer", (index) => {
       this.map.removeLayer(this.showLayers[index]);
       this.showLayers.splice(index, 1);
-    })
+    });
+    this.$bus.$on("changeVisible", (index) => {
+      this.visible[index] = !this.visible[index];
+      this.showLayers[index].setVisible(this.visible[index]);
+    });
   },
   methods: {
     init () {
@@ -90,6 +95,7 @@ export default {
           })
         });
       this.showLayers.push(wmsLayer);
+      this.visible.push(true);
       this.map.addLayer(wmsLayer);
     },
     getNeoCap () {
