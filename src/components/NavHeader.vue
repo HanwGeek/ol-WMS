@@ -1,5 +1,12 @@
 <template>
   <div id='nav-header'>
+    <div>
+      <el-button 
+        icon="el-icon-menu" 
+        size="small" 
+        @click="showSide"
+        circle></el-button>
+    </div>
     <div id='title'>{{title}}</div>
     <div id='title'>
       <el-switch 
@@ -24,11 +31,16 @@ export default {
       title: 'OpenLayers',
       avatar: require("../assets/avatar.jpg"),
       activeOsm: true,
+      isShowSide: false
     }
   },
   methods: {
-    switchOsm() {
+    switchOsm () {
       this.$bus.$emit("switchOsm", this.activeOsm);
+    },
+    showSide () {
+      this.isShowSide = !this.isShowSide;
+      this.$bus.$emit("showSide", this.isShowSide);
     }
   }
 }
@@ -52,6 +64,14 @@ export default {
   font-size: 24px;
   float: left;
   vertical-align: center;
+}
+
+.el-button {
+  position: fixed;
+  left: 10px;
+  top: 15px;
+  padding: 10px;
+  /* height: 40px; */
 }
 
 

@@ -1,7 +1,22 @@
 <template>
   <div>
     <el-button type="primary" round @click="getCap">GetCapabilities</el-button>
-    <el-collapse accordion>    
+    <el-collapse accordion>
+    <el-collapse-item title="当前添加图层">
+      <el-table
+        :data="this.showLayers"
+        :show-header="false">
+      <el-table-column
+        prop="name"
+        min-width="150px">
+      </el-table-column>
+      <el-table-column>
+        <template slot-scope="scope">
+          <el-button size="small" type="danger" @click="deleteLayer(scope.$index, scope.row)" icon="el-icon-delete" circle></el-button>
+        </template>
+      </el-table-column>
+      </el-table>
+    </el-collapse-item>    
     <el-collapse-item title="Neo" name="1">
 <!--       
       <ul>
@@ -17,8 +32,7 @@
         <el-table-column 
           type="expand"
           class="expand-table"
-          min-width="200px">
-          
+          min-width="200px">    
           <template slot-scope="props" class="expand-table">
             <el-table
               :data="props.row.Layer"
@@ -58,19 +72,20 @@ export default {
       activeNames: "",
       layers: null,
       activeOsm: true,
+      showLayers: [],
     }
   },
   created () {
     this.$bus.$on("getLayers", (layers) => {
       this.layers = layers;
-      })
+      });
     },
   methods: {
-    getCap () {
+    getCap() {
       this.$bus.$emit("getNeoCap");
     },
     click(row) {
-      console.log(row);
+      this.showLayers.push({'name':row.Name});
       this.$bus.$emit("getLayerName", row.Name);
     },
     expandChange(row, expandedRows) {
@@ -78,7 +93,10 @@ export default {
         expandedRows.shift();
       }
     },
-
+    deleteLayer(index, r) {
+      this.showLayers.splice(index, 1);
+      this.$bus.$emit("deleteLayer", index);
+    }
   }
 }
 </script>

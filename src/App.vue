@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <el-container style="height: 600px">
+    <el-container style="height: 700px">
       <!-- <el-header> -->
        <NavHeader />
       <!-- </el-header> -->
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="250px" v-show="showSide">
           <SideBar />
         </el-aside>
         <el-main>
@@ -25,6 +25,16 @@ export default {
   components: {
     NavHeader,
     SideBar
+  },
+  data () {
+    return {
+      showSide: false
+    }
+  },
+  created () {
+    this.$bus.$on("showSide", (show) => {
+      this.showSide = show;
+    })
   }
 }
 </script>
@@ -39,8 +49,13 @@ export default {
   margin-top: 0px;
 }
 
+.el-container {
+  height: 100%;
+}
+
 .el-main {
   padding: 0px;
+  height: 100%;
 }
 
 .el-aside {

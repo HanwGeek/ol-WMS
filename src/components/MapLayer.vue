@@ -35,7 +35,8 @@ export default {
       cap: null,
       layers: null,
       wmsLayers: null,
-      osmLayers: null,
+      osmLayer: null,
+      showLayers: [],
       layerName: "",
       neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms',
       mrWMS: 'https://mrdata.usgs.gov/wms.html?service=WMS',
@@ -57,6 +58,10 @@ export default {
     this.$bus.$on("switchOsm", (activeOsm) => {
       this.osmLayer.setVisible(activeOsm);
     });
+    this.$bus.$on("deleteLayer", (index) => {
+      this.map.removeLayer(this.showLayers[index]);
+      this.showLayers.splice(index, 1);
+    })
   },
   methods: {
     init () {
@@ -68,7 +73,7 @@ export default {
         target: 'map',
         view: new OpenLayersView({
           projection: 'CRS:84',
-          center: [0, 0],
+          center: [114, 30],
           zoom: 4
         })
       });
@@ -83,7 +88,8 @@ export default {
               },
             transition: 0
           })
-        })
+        });
+      this.showLayers.push(wmsLayer);
       this.map.addLayer(wmsLayer);
     },
     getNeoCap () {
@@ -108,7 +114,7 @@ export default {
 <style scoped>
 #map {
   width: 100%;
-  height: 600px;
+  height: 700px;
   left: 0;
   z-index: 5;
 }
