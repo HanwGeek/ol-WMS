@@ -49,9 +49,6 @@ export default {
     }
   },
   created () {
-    this.$bus.$on("getNeoCap", () => {
-      this.getNeoCap();
-    });
     this.$bus.$on("getLayerName", (name) => {
       this.layerName = name;
       this.draw();

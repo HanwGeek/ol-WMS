@@ -23,66 +23,35 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-collapse-item>    
-    <el-collapse-item title="NASA Earth Observations (NEO) WMS" name="1">
-      <el-table
-        :data="this.layers"
-        :show-header="false"
-        v-loading="layersLoading"
-        @expand-change="expandChange"
-        class="expand-table">
-        <el-table-column 
-          type="expand"
-          class="expand-table"
-          min-width="200px">    
-          <template slot-scope="props" class="expand-table">
-            <el-table
-              :data="props.row.Layer"
-              :show-header="false"
-              @row-click="click"
-              class="expand-table"
-              >
-              <el-table-column
-                prop="Name"
-                min-width="200px"
-              >
-              </el-table-column>
-            </el-table>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="Title">
-        </el-table-column>
-      </el-table>
     </el-collapse-item>
+    <OGCLayerItem ref="ogc" />    
   </el-collapse>
   </div>
 </template>
 
 <script>
+import OGCLayerItem from '@/components/OGCLayersItem'
+
 export default {
   name: 'SideBar',
+  components:{
+    OGCLayerItem
+  },
   data () {
     return {
       activeNames: "",
-      layers: null,
-      activeOsm: true,
       showLayers: [],
-      layersLoading: true,
+      ogcItems: [],
     }
   },
   created () {
-    this.$bus.$on("getLayers", (layers) => {
-      this.layers = layers;
-      this.layersLoading = false;
+      this.$bus.$on("itemClick", row => {
+        this.showLayers.push({'name':row.Name});
+        this.$bus.$emit("getLayerName", row.Name);
+        this.$refs.showLayers.toggleRowSelection(this.showLayers[this.showLayers.length - 1]);
       });
     },
   methods: {
-    click(row) {
-      this.showLayers.push({'name':row.Name});
-      this.$bus.$emit("getLayerName", row.Name);
-      this.$refs.showLayers.toggleRowSelection(this.showLayers[this.showLayers.length - 1]);
-    },
     expandChange(row, expandedRows) {
       if(expandedRows.length > 1) {
         expandedRows.shift();
@@ -95,10 +64,8 @@ export default {
     changeVisible(val, row) {
       this.$bus.$emit("changeVisible", this.showLayers.indexOf(row));
     },
-    loadWmsLayers(name) {
-      if (name == "1") {
-        this.$bus.$emit("getNeoCap");
-      }
+    loadWmsLayers() {
+      this.$refs.ogc.loadLayersData();
     }
   }
 }
@@ -122,5 +89,7 @@ export default {
   width: 100%;
   padding: 0px 0px;
 }
-/* .el-table__expand-column .cell { */
+.el-table__expanded-cell {
+  padding: 0px;
+}
 </style>
