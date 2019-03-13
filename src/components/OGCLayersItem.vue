@@ -33,11 +33,9 @@
 <script>
 export default {
   name: 'OGCLayerItem',
+  props: ['title', 'name', 'url'],
   data () {
     return {
-      url: "https://neo.sci.gsfc.nasa.gov/wms/wms",
-      title: "Neo",
-      name: "1",
       cap: null,
       layers: null,
       layersLoading: true,

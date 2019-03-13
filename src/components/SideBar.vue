@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-button type="primary" @click="dialShow = true" class="round" round>添加OGC服务</el-button>
     <el-collapse 
       @change="loadWmsLayers"
       accordion>
@@ -24,8 +25,35 @@
         </el-table-column>
       </el-table>
     </el-collapse-item>
-    <OGCLayerItem ref="ogc" />    
+    <div ref="layers" v-for="(item, index) in ogcItems">
+      <OGCLayerItem 
+        :title="item.title"  
+        :url="item.url"
+        :name="index + 1">
+      </OGCLayerItem>
+    </div>
   </el-collapse>
+  <el-dialog
+    title="添加新的OGC服务图层"
+    :visible.sync="dialShow"
+    width="500px">
+  <el-form label-width="80px" size="small">
+    <el-form-item label="服务名:">
+      <el-input v-model="title"></el-input>
+    </el-form-item>
+    <el-form-item label="URL:">
+      <el-input v-model="url"></el-input>
+    </el-form-item>
+  </el-form>
+  <el-row type="flex" justify="center">
+    <el-col :span="12">
+      <el-button class="round" @click="dialShow = false" round>取消</el-button>
+    </el-col>
+    <el-col :span="12">
+      <el-button class="round" type="primary" @click="addOGCService" round>确定</el-button>
+    </el-col>
+  </el-row>
+  </el-dialog>
   </div>
 </template>
 
@@ -40,6 +68,9 @@ export default {
   data () {
     return {
       activeNames: "",
+      dialShow: false,
+      url: "",
+      title: "",
       showLayers: [],
       ogcItems: [],
     }
@@ -64,15 +95,30 @@ export default {
     changeVisible(val, row) {
       this.$bus.$emit("changeVisible", this.showLayers.indexOf(row));
     },
-    loadWmsLayers() {
-      this.$refs.ogc.loadLayersData();
+    loadWmsLayers(name) {
+      // console.log(name);
+      if (name != "" && name != "0") {
+      //   // console.log(this.$children[1].$children[name].title);
+        this.$children[1].$children[name].loadLayersData();
+      }
+    },
+    addOGCService() {
+      this.ogcItems.push({
+        title: this.title,
+        url: this.url
+      });
+      this.title = "";
+      this.url = "";
+      this.dialShow = false;
     }
   }
 }
 </script>
 
 <style scoped>
-
+.round {
+  padding: 10px 50px;
+}
 .el-collapse-item {
   font-size: 10px;
 }
