@@ -10,7 +10,24 @@
           type="expand"
           class="expand-table"
           min-width="200px">    
-          <template slot-scope="props" class="expand-table">
+          <template slot-scope="props" class="expand-table" v-if="isHasChildren">
+            <el-table
+              :data="props.row.Layer"
+              :show-header="false"
+              @row-click="click"
+              class="expand-table">
+              <el-table-column
+                prop="Title"
+                min-width="200px">
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column 
+          type="expand"
+          class="expand-table"
+          min-width="200px">    
+          <template slot-scope="props" class="expand-table" v-if="!isHasChildren">
             <el-table
               :data="props.row.Layer"
               :show-header="false"
@@ -22,7 +39,7 @@
               </el-table-column>
             </el-table>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="Title">
         </el-table-column>
@@ -39,6 +56,7 @@ export default {
       cap: null,
       layers: null,
       layersLoading: true,
+      isHasChildren: false,
     }
   },
   methods: {
@@ -50,7 +68,21 @@ export default {
         }
       }).then((res) => {
         this.cap = this.$x2js.xml2js(res.data).WMS_Capabilities;
-        this.layers = this.cap.Capability.Layer.Layer;
+        let layers = this.cap.Capability.Layer.Layer;
+        if ('Layer' in layers[0]) {
+          // for (let i = 0; i < layers.length; i++) {
+          //   let _layers = layers[i];
+
+          // }
+          var a = layers.map(o => ({
+            name: o.Title,
+            layers: [{
+              title: o.Layer.Title,
+              name: o.Layer.Name
+            }]
+          }));
+          console.log(a);
+        }
         this.layersLoading = false;
       })
     },

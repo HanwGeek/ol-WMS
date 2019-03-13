@@ -72,7 +72,16 @@ export default {
       url: "",
       title: "",
       showLayers: [],
-      ogcItems: [],
+      ogcItems: [
+        {
+          title: 'NASA Earth Observations (NEO) WMS',
+          url: 'https://neo.sci.gsfc.nasa.gov/wms/wms'
+        },
+        {
+          title: 'National Mineral Resource Assessment 1998',
+          url: 'https://mrdata.usgs.gov/services/nmra'
+        }
+      ],
     }
   },
   created () {
@@ -96,9 +105,8 @@ export default {
       this.$bus.$emit("changeVisible", this.showLayers.indexOf(row));
     },
     loadWmsLayers(name) {
-      // console.log(name);
       if (name != "" && name != "0") {
-      //   // console.log(this.$children[1].$children[name].title);
+        // console.log(this.$children[1].$children[name].title);
         this.$children[1].$children[name].loadLayersData();
       }
     },
