@@ -10,9 +10,9 @@
           type="expand"
           class="expand-table"
           min-width="200px">    
-          <template slot-scope="props" class="expand-table" v-if="isHasChildren">
+          <template slot-scope="props" class="expand-table">
             <el-table
-              :data="props.row.Layer"
+              :data="props.row.layers"
               :show-header="false"
               @row-click="click"
               class="expand-table">
@@ -23,25 +23,8 @@
             </el-table>
           </template>
         </el-table-column>
-        <!-- <el-table-column 
-          type="expand"
-          class="expand-table"
-          min-width="200px">    
-          <template slot-scope="props" class="expand-table" v-if="!isHasChildren">
-            <el-table
-              :data="props.row.Layer"
-              :show-header="false"
-              @row-click="click"
-              class="expand-table">
-              <el-table-column
-                prop="Name"
-                min-width="200px">
-              </el-table-column>
-            </el-table>
-          </template>
-        </el-table-column> -->
         <el-table-column
-          prop="Title">
+          prop="title">
         </el-table-column>
       </el-table>
     </el-collapse-item>
@@ -70,18 +53,19 @@ export default {
         this.cap = this.$x2js.xml2js(res.data).WMS_Capabilities;
         let layers = this.cap.Capability.Layer.Layer;
         if ('Layer' in layers[0]) {
-          // for (let i = 0; i < layers.length; i++) {
-          //   let _layers = layers[i];
-
-          // }
-          var a = layers.map(o => ({
-            name: o.Title,
+          this.layers = layers.map(o => ({
+            title: o.Title,
+            layers: o.Layer
+          }));
+        }
+        else {
+          this.layers = layers.map(o =>({
+            title: o.Title,
             layers: [{
-              title: o.Layer.Title,
-              name: o.Layer.Name
+              Title: o.Title,
+              Name: o.Name
             }]
           }));
-          console.log(a);
         }
         this.layersLoading = false;
       })
@@ -92,7 +76,7 @@ export default {
       }
     },
     click(row) {
-      this.$bus.$emit("itemClick", row);
+      this.$bus.$emit("itemClick", [this.url, row.Name]);
     }
   }
 }

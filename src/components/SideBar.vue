@@ -85,9 +85,9 @@ export default {
     }
   },
   created () {
-      this.$bus.$on("itemClick", row => {
-        this.showLayers.push({'name':row.Name});
-        this.$bus.$emit("getLayerName", row.Name);
+      this.$bus.$on("itemClick", (param) => {
+        this.showLayers.push({'name':param[1]});
+        this.$bus.$emit("getLayer", param);
         this.$refs.showLayers.toggleRowSelection(this.showLayers[this.showLayers.length - 1]);
       });
     },

@@ -49,9 +49,9 @@ export default {
     }
   },
   created () {
-    this.$bus.$on("getLayerName", (name) => {
-      this.layerName = name;
-      this.draw();
+    this.$bus.$on("getLayer", param => {
+      this.layerName = param[1];
+      this.draw(param[0]);
     });
     this.$bus.$on("switchOsm", (activeOsm) => {
       this.osmLayer.setVisible(activeOsm);
@@ -80,33 +80,20 @@ export default {
         })
       });
     },
-    draw() {
-        var wmsLayer = new TileLayer({
-          // extent: [-180, -90, -180, 90],
-          source: new TileWMS({
-            url: this.neoWMS,
-            params: {
-              'LAYERS': this.layerName
-              },
-            transition: 0
-          })
-        });
+    draw(serviceUrl) {
+      var wmsLayer = new TileLayer({
+        source: new TileWMS({
+          url: serviceUrl,
+          params: {
+            'LAYERS': this.layerName,
+            },
+          transition: 0
+        })
+      });
       this.showLayers.push(wmsLayer);
       this.visible.push(true);
       this.map.addLayer(wmsLayer);
     },
-    getNeoCap () {
-      this.$http.get(this.neoWMS, {
-        params:{
-          service: "WMS",
-          request: 'GetCapabilities'
-        }
-      }).then((res) => {
-        this.cap = this.$x2js.xml2js(res.data).WMS_Capabilities;
-        this.wmsLayers = this.cap.Capability.Layer.Layer;
-        this.$bus.$emit("getLayers", this.wmsLayers);
-      })
-    }
   },
   mounted () {
     this.init();
