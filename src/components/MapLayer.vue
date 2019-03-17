@@ -14,10 +14,17 @@ import Map from 'ol/Map'
 import OpenLayersView from 'ol/View'
 import Overlay from 'ol/Overlay'
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer'
-import {Style, Fill, Stroke} from 'ol/style'
+import {Style, Fill, Stroke, RegularShape, Circle as CircleStyle} from 'ol/style'
 import {OSM, vector, TileWMS} from 'ol/source'
 import GeoJSON from 'ol/format/GeoJSON'
+import XML from 'ol/format/XML'
+import WFS from 'ol/format/wfs'
+import KML from 'ol/format/kml'
+import GML2 from 'ol/format/GML2'
+import GML3 from 'ol/format/GML3'
 import {toStringHDMS} from 'ol/coordinate'
+import {bbox as bboxStrategy} from 'ol/loadingstrategy'
+import VectorSource from 'ol/source/Vector'
 import x2js from 'x2js'
 
 export default {
@@ -39,8 +46,6 @@ export default {
       showLayers: [],
       visible: [],
       layerName: "",
-      neoWMS: 'https://neo.sci.gsfc.nasa.gov/wms/wms',
-      mrWMS: 'https://mrdata.usgs.gov/wms.html',
       format: 'image/png',
       crs: "CRS:84"
       //https://mrdata.usgs.gov/services/nmra?request=getmap&service=WMS&version=1.3.0&layers=USNationalMineralAssessment1998&width=4096&height=4096&crs=EPSG:4326&bbox=24,-165,73,-66&format=image/png
@@ -49,8 +54,8 @@ export default {
     }
   },
   created () {
-    this.$bus.$on("getLayer", param => {
-      this.layerName = param[1];
+    this.$bus.$on("getLayerMap", param => {
+      this.layerName = param[2];
       this.draw(param[0]);
     });
     this.$bus.$on("switchOsm", (activeOsm) => {
@@ -76,7 +81,7 @@ export default {
         view: new OpenLayersView({
           projection: 'CRS:84',
           center: [114, 30],
-          zoom: 4
+          zoom: 12
         })
       });
     },

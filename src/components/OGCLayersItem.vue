@@ -76,7 +76,7 @@ export default {
       }
     },
     click(row) {
-      this.$bus.$emit("itemClick", [this.url, row.Name]);
+      this.$bus.$emit("itemClick", [this.url, row.Title, row.Name]);
     }
   }
 }

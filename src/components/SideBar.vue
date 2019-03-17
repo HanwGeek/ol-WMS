@@ -15,7 +15,7 @@
         width="50">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="title"
           min-width="170px">
         </el-table-column>
         <el-table-column>
@@ -86,8 +86,8 @@ export default {
   },
   created () {
       this.$bus.$on("itemClick", (param) => {
-        this.showLayers.push({'name':param[1]});
-        this.$bus.$emit("getLayer", param);
+        this.showLayers.push({'title':param[1]});
+        this.$bus.$emit("getLayerMap", param);
         this.$refs.showLayers.toggleRowSelection(this.showLayers[this.showLayers.length - 1]);
       });
     },
