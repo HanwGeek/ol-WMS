@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <el-container style="height: 700px">
+    <el-container style="height: 100vh">
       <!-- <el-header> -->
        <NavHeader />
       <!-- </el-header> -->
       <el-container>
-        <el-aside width="360px" v-show="showSide">
+        <el-aside width="20vw" v-show="showSide">
           <SideBar />
         </el-aside>
         <el-main>

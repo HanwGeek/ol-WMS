@@ -111,13 +111,23 @@ export default {
       }
     },
     addOGCService() {
-      this.ogcItems.push({
-        title: this.title,
-        url: this.url
+      this.$http.get(this.url, {
+        params:{
+          service: "WMS",
+          request: 'GetCapabilities'
+        }
+      }).then(res => {
+        this.ogcItems.push({
+          title: this.title,
+          url: this.url
+        });
+        this.title = "";
+        this.url = "";
+        this.dialShow = false;
+      }).catch(err => {
+        this.$message.error("链接无效!");
+        return;
       });
-      this.title = "";
-      this.url = "";
-      this.dialShow = false;
     }
   }
 }
